@@ -1,36 +1,54 @@
-// newsService.js
-const newsAPIKey = '988add00124e467dba58c1b9349417fc'; 
-//const theGuadianKey = '5e2bb17b-a822-40b0-a5c0-d40e872e3bf8';
+import axios from 'axios';
+
+const apiKey = '988add00124e467dba58c1b9349417fc';
+//const nyapiKey = 'yKCQp5kkoGA6aqsvA8BLBUN7ReybfHop';
+
+// Define your NewYorkTime API key and endpoint
+const NYTapiKey = 'yKCQp5kkoGA6aqsvA8BLBUN7ReybfHop';
 
 
-async function fetchNewsFromNewsApi() {
-  const response = await fetch('https://newsapi.org/v2/top-headlines?country=us', {
-    headers: {
-      'X-Api-Key': newsAPIKey,
-    },
-  });
-  const data = await response.json();
-  return data.articles;
+
+// Function to fetch news from NewsAPI
+export async function fetchNewsFromNewsAPI() {
+  try {
+    const response = await axios.get(`https://newsapi.org/v2/top-headlines?sources=newsapi&apiKey=${apiKey}`);
+    if (response.status === 200) {
+      return response.data.articles;
+    }
+  } catch (error) {
+    console.error('Error fetching news from NewsAPI:', error);
+  }
+  return [];
 }
 
-// async function fetchNewsFromNewscred() {
-//   const response = await fetch('https://api.example.com/newscred/articles', {
-//     headers: {
-//       'Authorization': `Bearer ${apiKey}`,
-//     },
-//   });
-//   const data = await response.json();
-//   return data.articles;
-// }
+export async function fetchNewsFromOpenNews() {
+  try {
+    const response = await axios.get('https://api.opennewsapi.com/v1/articles', {
+      params: {
+        apiKey,
+        // Add any additional query parameters as needed
+      },
+    });
 
-// async function fetchNewsFromOpenNews() {
-//   const response = await fetch('https://opennews.example.com/api/news', {
-//     headers: {
-//       'Authorization': `Bearer ${apiKey}`,
-//     },
-//   });
-//   const data = await response.json();
-//   return data.articles;
-// }
+    if (response.status === 200) {
+      return response.data.articles;
+    }
+  } catch (error) {
+    console.error('Error fetching news from OpenNews:', error);
+  }
+  return [];
+}
 
-export { fetchNewsFromNewsApi };
+// Function to fetch news from NewYorkTime
+export async function fetchNewsFromNewYorkTime() {
+  try {
+    const response = await axios.get(`https://api.nytimes.com/svc/topstories/v2/home.json?api-key=${NYTapiKey}`);
+    if (response.status === 200) {
+      return response.data.articles;
+    }
+  } catch (error) {
+    console.error('Error fetching news from NewsAPI:', error);
+  }
+  return [];
+}
+

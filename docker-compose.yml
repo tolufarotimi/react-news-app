@@ -1,0 +1,16 @@
+version: '1'
+services:
+  app:
+    container_name: react-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80" # Map the container's port 80 to host port 3000
+    volumes:
+      - .:/app # Mount the current directory to the container
+    environment:
+      - REACT_APP_API_URL=http:http://localhost:3000/ # Set environment variables
+
+  # Add other services if needed, e.g., a database
+

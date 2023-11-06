@@ -1,48 +1,92 @@
-// Registration.js
 import React, { useState } from 'react';
-import { useAuth } from './AuthContext';
-import './styles.css'; // Import the CSS file
+import { Link } from 'react-router-dom';
+//import { withRouter } from 'react-router-dom';
 
-function Registration() {
-  const { dispatch } = useAuth();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [firstname, setFirstname] = useState('');
-  const [lastname, setLastname] = useState('');
+function Registration({ history }) {
+  const [formData, setFormData] = useState({
+    firstname: '',
+    lastname: '',
+    email: '',
+    password: '',
+  });
 
-  const handleRegistration = async () => {
-    const user = { email, password, lastname, firstname };
-    
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     try {
-      const response = await fetch('http://127.0.0.1:8000/register', {
+      const response = await fetch('/api/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(user),
+        body: JSON.stringify(formData),
       });
 
       if (response.ok) {
-        // Registration was successful
-        dispatch({ type: 'LOGIN', payload: { user: { email, firstname } } });
+        // Registration successful, redirect to login page or show a success message
+        history.push('/login');
       } else {
-        // Handle registration errors here
+        // Handle registration error, show an error message
+        console.error('Registration error:', response.status);
       }
     } catch (error) {
-      // Handle network errors here
+      console.error('Registration error:', error);
     }
-  }
+  };
 
   return (
     <div className="container">
-      <div className="form">
-        <h2>Registration</h2>
-        <input type="text" className="input" placeholder="First Name" value={firstname} onChange={(e) => setFirstname(e.target.value)} />
-        <input type="text" className="input" placeholder="Last Name" value={lastname} onChange={(e) => setLastname(e.target.value)} />
-        <input type="email" className="input" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
-        <input type="password" className="input" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
-        <button className="button" onClick={handleRegistration}>Register</button>
-      </div>
+        <div className="row">
+            <div className="col-md-6">
+                <h2>Registration</h2>
+                <form onSubmit={handleSubmit}>
+                    <div>
+                    <input
+                        type="text"
+                        name="firstname"
+                        placeholder="First Name"
+                        value={formData.firstname}
+                        onChange={handleInputChange}
+                    />
+                    </div>
+                    <div>
+                    <input
+                        type="text"
+                        name="lastname"
+                        placeholder="Last Name"
+                        value={formData.lastname}
+                        onChange={handleInputChange}
+                    />
+                    </div>
+                    <div>
+                    <input
+                        type="email"
+                        name="email"
+                        placeholder="Email"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                    />
+                    </div>
+                    <div>
+                    <input
+                        type="password"
+                        name="password"
+                        placeholder="Password"
+                        value={formData.password}
+                        onChange={handleInputChange}
+                    />
+                    </div>
+                    <div>
+                    <button type="submit">Register</button>
+                    </div>
+                    <p>Already have an account? <Link to="/login">Login here</Link></p>
+                </form>
+            </div>
+        </div>
     </div>
   );
 }
